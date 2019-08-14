@@ -18,24 +18,16 @@
 </body>
 <script>
     Ext.onReady(function () {
-        searchIconFunc = function(){
-            console.log(1231)
-        };
+
         var searchIcon = new Ext.BoxComponent({
-            id:'search',
             xtype: 'box',
+            id: 'search',
             cls: 'icon',
             autoEl: {
                 tag: 'img',
-                src:'img/search.png',
+                src: 'img/search.png',
             },
-        })
-        searchIcon.addEvents('click1')
-        searchIcon.on('click',searchIconFunc);
-        Ext.getCmp('search').on('click',function(){
-            Ext.Msg.alert('111111');
-            searchIcon.fireEvent('click1')
-        })
+        });
         var logo = new Ext.BoxComponent({
             xtype: 'box',
             autoEl: {
@@ -72,6 +64,9 @@
             renderTo: 'app',
             items: [logo, inputGroup, searchIcon],
             style: 'margin-top:200px;margin-left:200px'
+        })
+        Ext.get('search').on('click', function () {
+            document.location.href='https://cn.bing.com/'
         })
     })
 
@@ -115,7 +110,6 @@
         top: 15px;
         cursor: pointer;
     }
- 
 </style>
 
 </html>
