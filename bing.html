@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link type="text/css" rel="stylesheet" href="ext-3.3.0/resources/css/ext-all.css" />
+    <script language="javascript" src="ext-3.3.0/adapter/ext/ext-base.js"></script>
+    <script language="javascript" src="ext-3.3.0/ext-all.js"></script>
+    <script language="javascript" src="ext-3.3.0/src/locale/ext-lang-zh_CN.js"></script>
+    <title>Bing</title>
+</head>
+
+<body>
+    <div id='app'>
+    </div>
+</body>
+<script>
+    Ext.onReady(function () {
+        searchIconFunc = function(){
+            console.log(1231)
+        };
+        var searchIcon = new Ext.BoxComponent({
+            id:'search',
+            xtype: 'box',
+            cls: 'icon',
+            autoEl: {
+                tag: 'img',
+                src:'img/search.png',
+            },
+        })
+        searchIcon.addEvents('click1')
+        searchIcon.on('click',searchIconFunc);
+        Ext.getCmp('search').on('click',function(){
+            Ext.Msg.alert('111111');
+            searchIcon.fireEvent('click1')
+        })
+        var logo = new Ext.BoxComponent({
+            xtype: 'box',
+            autoEl: {
+                tag: 'img',
+                src: 'img/bing-logo.png',
+                width: 132
+            },
+            style: 'margin-right:30px'
+        })
+        var inputGroup = new Ext.TabPanel({
+            activeTab: '1',
+            plain: true,
+            border: false,
+            width: 630,
+            items: [
+                {
+                    xtype: 'textfield',
+                    height: 45,
+                    id: '1',
+                    title: '国内版',
+                    style: "font-size:16px"
+                },
+                {
+                    xtype: 'textfield',
+                    height: 45,
+                    id: '2',
+                    title: '国际版',
+                    style: "font-size:16px"
+                },
+            ]
+        });
+        var container = new Ext.Container({
+            layout: 'table',
+            renderTo: 'app',
+            items: [logo, inputGroup, searchIcon],
+            style: 'margin-top:200px;margin-left:200px'
+        })
+    })
+
+
+
+</script>
+<style>
+    body {
+        background: url(img/index.jpg) no-repeat;
+    }
+
+    ul.x-tab-strip li {
+        margin-left: 0px;
+    }
+
+    .x-tab-strip-spacer {
+        display: none
+    }
+
+    .x-tab-strip-top .x-tab-right,
+    .x-tab-strip-top .x-tab-left,
+    .x-tab-strip-top .x-tab-strip-inner {
+        background-image: none !important;
+        background-color: #a7bda6
+    }
+
+    .x-form-text,
+    textarea.x-form-field {
+        background-image: none;
+        border: none
+    }
+
+    .x-tab-panel-bwrap {
+        border-radius: 10px;
+        border-top-left-radius: 0
+    }
+
+    .icon {
+        position: relative;
+        left: -40px;
+        top: 15px;
+        cursor: pointer;
+    }
+ 
+</style>
+
+</html>
