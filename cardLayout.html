@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link type="text/css" rel="stylesheet" href="ext-3.3.0/resources/css/ext-all.css" />
+    <script language="javascript" src="ext-3.3.0/adapter/ext/ext-base.js"></script>
+    <script language="javascript" src="ext-3.3.0/ext-all.js"></script>
+    <script language="javascript" src="ext-3.3.0/src/locale/ext-lang-zh_CN.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    var resultList = ''
+    Ext.onReady(function () {
+        function getResult() {
+            resultList = ''
+            var question_1 = Ext.getCmp('question1').getValue();
+            var question_2 = Ext.getCmp('question2').getValue().map(item => item.boxLabel);
+            question_1
+            resultList = `请再次确定答案：<br>${question_1.name}:${question_1.boxLabel}<br>question-2:${question_2===''?question_1.boxLabel:'空'}`;
+            Ext.getCmp('resultCard').setText(resultList);
+        }
+        var navHandler = function (direction) {
+            var questionCard = Ext.getCmp('questionCard').layout;
+            var prev = Ext.getCmp('move-prev');
+            var next = Ext.getCmp('move-next');
+            var activeId = questionCard.activeItem.id;
+            if (activeId == 'card-0') {
+                if (direction == 1) {
+                    questionCard.setActiveItem(1);
+                    prev.setDisabled(false);
+                }
+            }
+            else if (activeId == 'card-1') {
+                if (direction == -1) {
+                    questionCard.setActiveItem(0);
+                    prev.setDisabled(true);
+                } else {
+                    getResult();
+                    questionCard.setActiveItem(2);
+                    next.setDisabled(true);
+                }
+            } else if (activeId == 'card-2') {
+                if (direction == -1) {
+                    questionCard.setActiveItem(1);
+                    next.setDisabled(false)
+                }
+            }
+        };
+        var question_1 = [
+            {
+                // xtype: 'radio',
+                name: 'question-1',
+                boxLabel: '湿垃圾',
+                inputValue: 'wetgarbage',
+            },
+            {
+                // xtype: 'radio',
+                name: 'question-1',
+                boxLabel: '干垃圾',
+                inputValue: 'drygarbage',
+
+            },
+            {
+                // xtype: 'radio',
+                name: 'question-1',
+                boxLabel: '有害垃圾',
+                inputValue: 'car',
+            },
+            {
+                // xtype: 'radio',
+                name: 'question-1',
+                boxLabel: '可回收垃圾',
+                inputValue: 'recyclgarbage',
+            }
+        ]
+        var question_2 = [
+            {
+                // xtype: 'radio',
+                name: 'question-2',
+                boxLabel: '广州市',
+                inputValue: 'guangzhou',
+            },
+            {
+                // xtype: 'radio',
+                name: 'question-2',
+                boxLabel: '深圳市',
+                inputValue: 'shengzhen',
+
+            },
+            {
+                // xtype: 'radio',
+                name: 'question-2',
+                boxLabel: '长沙市',
+                inputValue: 'changsha',
+            },
+            {
+                // xtype: 'radio',
+                name: 'question-2',
+                boxLabel: '珠海市',
+                inputValue: 'zhuhai',
+            }
+        ]
+        var card = new Ext.Panel({
+            id: 'questionCard',
+            renderTo: document.body,
+            title: 'Example Wizard',
+            layout: 'card',
+            activeItem: 0, // make sure the active item is set on the container config!
+            bodyStyle: 'padding:15px',
+            width: 400,
+            height: 300,
+            style:'margin:0 auto',
+            defaults: {
+                border: false
+            },
+            // just an example of one possible navigation scheme, using buttons
+            bbar: [
+                {
+                    id: 'move-prev',
+                    text: 'Back',
+                    handler: navHandler.createDelegate(this, [-1]),
+                    disabled: true
+                },
+                '->', // greedy spacer so that the buttons are aligned to each side
+                {
+                    id: 'move-next',
+                    text: 'Next',
+                    handler: navHandler.createDelegate(this, [1])
+                }
+            ],
+            // the panels (or "cards") within the layout
+            items: [
+                {
+                    id: 'card-0',
+                    items: [
+                        {
+                            xtype: 'tbtext',
+                            html: '<div>Q1:请问番茄酱属于以下哪种垃圾？</div>',
+                        },
+                        {
+                            xtype: 'radiogroup',
+                            id: 'question1',
+                            items: [question_1],
+                        }
+                    ]
+                },
+                {
+                    id: 'card-1',
+                    items: [
+                        {
+                            xtype: 'tbtext',
+                            html: '<div>Q2:请问以下哪个城市不属于广东省？</div>',
+                        },
+                        {
+                            xtype: 'checkboxgroup',
+                            id: 'question2',
+                            items: [question_2],
+                        }
+                    ]
+                },
+                {
+                    id: 'card-2',
+                    items: [
+                        {
+                            id: 'resultCard',
+                            xtype: 'tbtext',
+                        },
+                        {
+                            id: 'submit',
+                            xtype: 'button',
+                            text: 'submit',
+                            cls:'submitBtn'
+                        }
+                    ]
+                }
+            ]
+        });
+    })
+</script>
+<style>
+.submitBtn{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+</style>
+</html>
