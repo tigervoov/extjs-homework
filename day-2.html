@@ -22,8 +22,8 @@
             resultList = ''
             var question_1 = Ext.getCmp('question1').getValue();
             var question_2 = Ext.getCmp('question2').getValue().map(item => item.boxLabel);
-            question_1
-            resultList = `请再次确定答案：<br>${question_1.name}:${question_1.boxLabel}<br>question-2:${question_2===''?question_1.boxLabel:'空'}`;
+            resultList = `请再次确定答案：<br>${question_1.name}:${question_1.boxLabel}<br>question-2:${question_2.length !== 0 ? question_2 : '空'}`;
+            console.log(question_2)
             Ext.getCmp('resultCard').setText(resultList);
         }
         var navHandler = function (direction) {
@@ -116,7 +116,7 @@
             bodyStyle: 'padding:15px',
             width: 400,
             height: 300,
-            style:'margin:0 auto',
+            style: 'margin:0 auto',
             defaults: {
                 border: false
             },
@@ -146,14 +146,14 @@
                         },
                         {
                             xtype: 'radiogroup',
-                            id: ' ',
+                            id: 'question1',
                             items: [question_1],
                         }
                     ]
                 },
                 {
                     id: 'card-1',
-                    items: [ 
+                    items: [
                         {
                             xtype: 'tbtext',
                             html: '<div>Q2:请问以下哪个城市不属于广东省？</div>',
@@ -176,7 +176,7 @@
                             id: 'submit',
                             xtype: 'button',
                             text: 'submit',
-                            cls:'submitBtn'
+                            cls: 'submitBtn'
                         }
                     ]
                 }
@@ -185,10 +185,11 @@
     })
 </script>
 <style>
-.submitBtn{
-    position: absolute;
-    bottom: 0;
-    right: 0;
-}
+    .submitBtn {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
 </style>
+
 </html>
