@@ -23,7 +23,6 @@
             var question_1 = Ext.getCmp('question1').getValue();
             var question_2 = Ext.getCmp('question2').getValue().map(item => item.boxLabel);
             resultList = `请再次确定答案：<br>${question_1.name}:${question_1.boxLabel}<br>question-2:${question_2.length !== 0 ? question_2 : '空'}`;
-            console.log(question_2)
             Ext.getCmp('resultCard').setText(resultList);
         }
         var navHandler = function (direction) {
