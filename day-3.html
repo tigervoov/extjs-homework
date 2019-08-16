@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link type="text/css" rel="stylesheet" href="ext-3.3.0/resources/css/ext-all.css" />
+    <script language="javascript" src="ext-3.3.0/adapter/ext/ext-base.js"></script>
+    <script language="javascript" src="ext-3.3.0/ext-all.js"></script>
+    <script language="javascript" src="ext-3.3.0/src/locale/ext-lang-zh_CN.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="conntent"></div>
+</body>
+<script>
+    Ext.onReady(function () {
+        var menu = new Ext.menu.Menu({
+            items: [
+                {
+                    id: 'showInfo',
+                    text: 'Show Info',
+                },
+                {
+                    id: 'delete',
+                    text: 'Delete',
+                },
+            ],
+            listeners: {
+                itemclick: function (item) {
+                    const currentNode = item.parentMenu.contextNode;
+                    switch (item.id) {
+                        case 'showInfo':
+                            Ext.Msg.alert("Detali Message", currentNode.text)
+                            break;
+                        case 'delete':
+                            currentNode.remove()
+                            break;
+                    }
+                }
+            }
+        })
+        var province = new Ext.tree.AsyncTreeNode({ text: 'class-list' });
+        var tree = new Ext.tree.TreePanel({
+            root: province,
+            loader: new Ext.tree.TreeLoader({ dataUrl: 'tree.txt' }),
+            contextMenu: menu,
+            enableDD: true,
+            listeners: {
+                contextmenu: function (node, e) {
+                    node.select();
+                    var treeContextMenu = node.getOwnerTree().contextMenu;
+                    treeContextMenu.contextNode = node;
+                    treeContextMenu.showAt(e.getXY());
+                },
+
+            }
+
+
+        })
+        var currentNode;
+        tree.on('click', function (node) {
+            currentNode = node;
+            var ui = node.ui;
+            ui.addClass('bigFont');
+            Ext.defer(function () {
+                ui.removeClass('bigFont');
+            }, 3000);
+        });
+        tree.on('nodedrop', function (e) {
+            Ext.Msg.alert('Drag Event', 'currently dragging node: ' + e.dropNode.text + 'dropping into node: ' + e.target.text + ', dragging pattern is ' + e.point);
+        });
+
+
+        var treeEditor = new Ext.tree.TreeEditor(tree, { allowBlank: false }, {
+            listeners: {
+                complete: function (editor, currVal, origVal) {
+                    if (currVal.indexOf('Zh') != -1) {
+                        // editor.editNode.setCls('red')
+                        editor.boundEl.dom.style.color = 'red';
+
+                    }
+                }
+            }
+        });
+
+        var treeFilter = new Ext.tree.TreeFilter(tree, {
+            clearBank: true,
+            autoClear: true,
+        })
+        new Ext.Viewport({
+            layout: 'border',
+            title: '学生管理界面',
+            items: [{
+                region: 'north',
+                title: '学生管理界面',
+                autoHeight: true,
+                border: false,
+                margins: '0 0 5 0'
+            }, {
+                region: 'west',
+                collapsible: true,
+                title: '班级列表',
+                width: 200,
+                items: [
+                    tree
+                ]
+            }, {
+                region: 'center',
+                title: '操作',
+                xtype: 'form',
+                items: [
+                    {
+                        id: 'item',
+                        xtype: 'field',
+                        fieldLabel: 'Item',
+                    },
+                    {
+                        id: 'addBtn',
+                        xtype: 'button',
+                        text: 'Add',
+                    }
+                ]
+            }]
+        });
+
+        Ext.get('addBtn').on('click', function () {
+            var text = Ext.get('item').getValue();
+            if (text === '') {
+                Ext.Msg.alert('Error', 'The added item cannot be empty')
+            } else {
+                var newNode;
+                if (currentNode.leaf) {
+                    newNode = new Ext.tree.TreeNode({ text: text, leaf: false });
+                    currentNode.parentNode.appendChild(newNode);
+                }
+                else if (currentNode.parentNode && !currentNode.leaf) {
+                    newNode = new Ext.tree.TreeNode({ text: text, leaf: true });
+                    currentNode.appendChild(newNode);
+                }
+                else if (!currentNode.parentNode && !currentNode.leaf) {
+                    newNode = new Ext.tree.TreeNode({ text: text, leaf: false });
+                    currentNode.appendChild(newNode);
+                }
+            }
+        })
+    })
+</script>
+<style>
+    .red .x-tree-node-anchor span {
+        color: red !important;
+    }
+
+    .bigFont {
+        font-weight: bold
+    }
+</style>
+
+</html>
