@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link type="text/css" rel="stylesheet" href="ext-3.3.0/resources/css/ext-all.css" />
+    <script language="javascript" src="ext-3.3.0/adapter/ext/ext-base.js"></script>
+    <script language="javascript" src="ext-3.3.0/ext-all.js"></script>
+    <script language="javascript" src="ext-3.3.0/src/locale/ext-lang-zh_CN.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div id='my-el'></div>
+</body>
+<script>
+    Ext.onReady(function () {
+        var task = new Ext.util.DelayedTask(function () {
+            Ext.Msg.alert('Message', 'Success')
+            submitBlog()
+        });
+        function submitBlog() {
+            displayTpl = Ext.get('textarea').dom.value
+            var displayTpl = new Ext.XTemplate(displayTpl)
+            displayTpl.append(Ext.get("ext-gen10"), data);
+        }
+
+        var data = {
+            name: '张三',
+            job: 'JAVA程序员',
+            company: 'oocl',
+            address: '珠海市香洲区唐家湾',
+            hobby: [
+                '足球',
+                '篮球',
+                '编程',
+            ]
+        };
+        var tableTpl = new Ext.XTemplate(
+            '当前日期：{[new Date().toLocaleDateString()]}',
+            '<table cellpadding=0 cellspacing=0 border=1 width=400px>',
+            '<tr><td>姓名：</td><td>{name}</td></tr>',
+            '<tr><td>工作：</td><td>{job}</td></tr>',
+            '<tr><td>公司：</td><td>{company}</td></tr>',
+            '<tr><td>地址：</td><td>{address}</td></tr>',
+            '<tr><td>他的爱好：</td><td>',
+            '<tpl for="hobby">',
+            '<p>{.}</p>',
+            '</tpl></td></tr>',
+            '</table>'
+        );
+        var contextmenu = new Ext.menu.Menu({
+            items: [
+                {
+                    id: 'insertConMenu',
+                    text: 'InsertTable',
+                },
+                {
+                    id: 'resetConMenu',
+                    text: 'Reset',
+                },
+            ],
+            listeners: {
+                itemclick: function (item) {
+
+                    switch (item.id) {
+                        case 'insertConMenu':
+                            tableTpl.append(Ext.get("textarea"), data);
+                            break;
+                        case 'resetConMenu':
+                            Ext.getCmp('textarea').reset();
+                            break;
+                    }
+                }
+            }
+        })
+        var tb = new Ext.Toolbar({
+            width: 800,
+            items: [
+                {
+                    id: 'splitbutton',
+                    xtype: 'splitbutton',
+                    text: 'Edit',
+                    menu: new Ext.menu.Menu({
+                        items: [
+                            {
+                                text: 'Reset',
+                                handler: function (e) {
+                                    Ext.getCmp('textarea').reset()
+                                }
+                            },
+                        ]
+                    })
+                },
+                { xtype: 'tbspacer' },
+                {
+                    id: 'insert',
+                    text: 'Insert',
+                    menu: new Ext.menu.Menu({
+                        items: [{
+                            text: 'Table',
+                            handler: function (e) {
+                                tableTpl.append(Ext.get("textarea"), data);
+                            }
+                        },
+                        ]
+                    })
+                },
+                '->',
+                {
+                    id: 'reply',
+                    text: 'Reply',
+                    style: 'margin-right:30px;',
+                    handler: function () {
+                        task.delay(3000);
+                        var progressBar = Ext.Msg.show({
+                            title: "提示",
+                            msg: "正在提交，请稍等...",
+                            width: 300,
+                            wait: true,
+                            waitConfig: {
+                                interval: 300, duration: 3000, fn: function () {
+                                    Ext.Msg.hide();
+                                }
+                            },
+                            closable: true
+                        });
+
+                    }
+                }
+            ]
+        })
+        var viewport = new Ext.Panel({
+            renderTo: document.body,
+            layout: 'anchor',
+            title: '博客',
+            width: 800,
+            height: 800,
+            style: 'margin:0 auto',
+            items: [
+                {
+                    id: 'blogText',
+                    width: 800,
+                    height: 400,
+                    anchor: '100% 70%',
+                    autoScroll: true
+
+                },
+                tb,
+                {
+                    id: 'textarea',
+                    xtype: 'textarea',
+                    anchor: '100% 30%',
+                    listeners: {
+                        render: function (p) {
+                            p.getEl().on('contextmenu', function (e) {
+                                e.preventDefault();
+                                contextmenu.showAt(e.getXY());
+                            });
+                        },
+                    }
+
+                }
+            ],
+        })
+
+    })
+
+</script>
+
+</html>
