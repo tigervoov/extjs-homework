@@ -1,0 +1,5 @@
+[
+    {text:'class-1',children:[{text:'Joshua',leaf: true},{text:'Bill',leaf: true},{text:'Jack',leaf: true}]},
+    {text:'class-2',children:[{text:'Danny',leaf: true},{text:'Walion',leaf: true},{text:'Eric',leaf: true}]},
+    {text:'class-3',children:[{text:'Ethan',leaf: true},{text:'Elion',leaf: true},{text:'Lance',leaf: true}]}
+]
