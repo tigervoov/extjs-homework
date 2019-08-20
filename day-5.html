@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,15 +9,275 @@
     <script language="javascript" src="ext-3.3.0/adapter/ext/ext-base.js"></script>
     <script language="javascript" src="ext-3.3.0/ext-all.js"></script>
     <script language="javascript" src="ext-3.3.0/src/locale/ext-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="ext-3.3.0\examples\ux\PagingMemoryProxy.js"></script>
     <title>Document</title>
 </head>
+
 <body>
-    
+
 </body>
 <script>
-    Ext.onReady(function(){
-        
-    })
 
+    Ext.onReady(function () {
+        var selectItem;
+        var addNewStudent = function () {
+            var newRecord = new Ext.data.Record({
+                name: Ext.fly('name').getValue(),
+                class: Ext.fly('class').getValue(),
+                sex: Ext.fly('sex').getValue(),
+                age: Ext.fly('age').getValue(),
+                birthday: Ext.fly('birthday').getValue(),
+                avatar: Ext.fly('sex').getValue(),
+            })
+            if (selectItem) {
+                groupStore.insert(selectItem + 1, newRecord)
+            } else {
+                groupStore.insert(0, newRecord)
+            }
+
+        }
+
+        var sm = new Ext.grid.CheckboxSelectionModel();
+        var cm = new Ext.grid.ColumnModel([
+            new Ext.grid.RowNumberer(),
+            sm,
+            {
+                header: 'name', dataIndex: 'name', sortable: true,
+                editor: new Ext.grid.GridEditor(
+                    new Ext.form.TextField({
+                        allowBlank: false
+                    })
+                )
+            },
+            {
+                header: 'class', dataIndex: 'class', editor: new Ext.grid.GridEditor(
+                    new Ext.form.TextField({
+                        allowBlank: false
+                    })
+                )
+            },
+            {
+                header: 'sex', dataIndex: 'sex', editor: new Ext.grid.GridEditor(
+                    new Ext.form.TextField({
+                        allowBlank: false
+                    })
+                )
+            },
+            {
+                header: 'age', dataIndex: 'age', editor: new Ext.grid.GridEditor(
+                    new Ext.form.TextField({
+                        allowBlank: false
+                    })
+                )
+            },
+            {
+                header: 'birthday', dataIndex: 'birthday', editor: new Ext.grid.GridEditor(
+                    new Ext.form.TextField({
+                        allowBlank: false
+                    })
+                )
+            },
+            {
+                header: 'avatar', dataIndex: 'avatar', renderer: function (value) {
+                    if (value === 'male') {
+                        return "<img src='img/male.png' style='width:16px'>"
+                    }
+                    else {
+                        return "<img src='img/woman.png' style='width:16px'>"
+                    }
+                }
+            },
+        ])
+        var data = [
+            ['Mike', '1', 'male', '19', '1996-1-1', 'male'],
+            ['Tom', '2', 'woman', '20', '1996-2-1', 'woman'],
+            ['Bill', '2', 'male', '21', '1996-3-1', 'male'],
+            ['Jack', '2', 'male', '21', '1996-3-1', 'male'],
+            ['Tiger', '3', 'male', '21', '1996-3-1', 'male'],
+            ['Joshua', '3', 'male', '21', '1996-3-1', 'male'],
+            ['Danny', '3', 'male', '21', '1996-3-1', 'male'],
+        ]
+        var groupStore = new Ext.data.GroupingStore({
+            proxy: new Ext.data.PagingMemoryProxy(data),
+            reader: new Ext.data.ArrayReader({}, [
+                { name: 'name' },
+                { name: 'class' },
+                { name: 'sex' },
+                { name: 'age' },
+                { name: 'birthday' },
+                { name: 'avatar' }
+            ]),
+            groupField: 'class',
+        })
+        groupStore.load({ params: { start: 0, limit: 5 } });
+        var contextmenu = new Ext.menu.Menu({
+            id: 'contextmenu',
+            items: [
+                {
+                    text: 'up',
+                    handler: function () {
+                        if (selectItem > 0) {
+                            groupStore.insert(selectItem - 1, groupStore.getAt(selectItem));
+                            groupStore.remove(selectItem);
+                            grid.getView().refresh();
+                        } else {
+                            groupStore.insert(groupStore.getTotalCount(), groupStore.getAt(selectItem));
+                            groupStore.remove(selectItem);
+                            grid.getView.refresh();
+                        }
+                    }
+                },
+                {
+                    text: 'Down',
+                    handler: function () {
+                        if (selectItem < groupStore.getTotalCount()) {
+                            groupStore.insert(selectItem + 1, groupStore.getAt(selectItem));
+                            groupStore.remove(selectItem);
+                            grid.getView().refresh();
+                        }
+                    }
+                },
+                {
+                    text: 'First',
+                    handler: function () {
+                        groupStore.insert(0, groupStore.getAt(selectItem));
+                        groupStore.remove(selectItem);
+                        grid.getView().refresh();
+                    }
+                },
+                {
+                    text: 'Last',
+                    handler: function () {
+                        groupStore.insert(groupStore.getTotalCount(), groupStore.getAt(selectItem));
+                        groupStore.remove(selectItem);
+                        grid.getView().refresh();
+                    }
+                }
+            ]
+        })
+        var grid = new Ext.grid.EditorGridPanel({
+            id: 'grid',
+            autoHeight: true,
+            loadMak: true,
+            store: groupStore,
+            cm: cm,
+            sm: sm,
+            contextmenu: contextmenu,
+            view: new Ext.grid.GroupingView(),
+            bbar: new Ext.PagingToolbar({
+                pageSize: 5,
+                displayInfo: true,
+                store: groupStore,
+            }),
+            listeners: {
+                'rowcontextmenu': function (grid, rowIndex, e) {
+                    selectItem = rowIndex;
+                    grid.getSelectionModel().selectRow(rowIndex);
+                    e.preventDefault();
+                    contextmenu.showAt(e.getXY())
+                },
+                'cellclick': function (grid, rowIndex, colIndex, e) {
+                    selectItem = rowIndex;
+                }
+            }
+        })
+
+        var form = new Ext.form.FormPanel({
+            width: 400,
+            defaults: {
+                allowBlank: false,
+                blankText: 'It is required',
+                msgTarget: 'under'
+            },
+            items: [
+                {
+                    id: 'name',
+                    xtype: 'textfield',
+                    emptyText: 'please input your name',
+                    fieldLabel: 'name',
+
+                },
+                {
+                    id: 'class',
+                    xtype: 'textfield',
+                    fieldLabel: 'class',
+                    emptyText: 'please input your class',
+                },
+                {
+                    id: 'sex',
+                    xtype: 'textfield',
+                    fieldLabel: 'sex',
+                    emptyText: 'please input your sex',
+                },
+                {
+                    id: 'age',
+                    xtype: 'textfield',
+                    fieldLabel: 'age',
+                    emptyText: 'please input your age',
+                },
+                {
+                    id: 'birthday',
+                    xtype: 'textfield',
+                    fieldLabel: 'birthday',
+                    emptyText: 'please input your birthday',
+                },
+            ],
+            buttons: [
+                {
+                    text: 'Add',
+                    handler: function () {
+                        addNewStudent()
+                        form.form.reset();
+                        addStudnetWindow.hide();
+                    }
+                },
+                {
+                    text: 'Cancel',
+                    handler: function () {
+                        form.form.reset();
+                        addStudnetWindow.hide();
+                    }
+                }
+            ],
+        })
+        var addStudnetWindow = new Ext.Window({
+            title: 'Add new student',
+            closeAction: 'hide',
+            layout: 'form',
+            items: [
+                form
+            ],
+        })
+        var isGroup = false
+        var panel = new Ext.Panel({
+            renderTo: document.body,
+            title: '学生管理界面',
+            layout: 'fit',
+            items: [
+                grid,
+                {
+                    xtype: 'button',
+                    text: 'Add',
+                    width: 80,
+                    handler: function () {
+                        addStudnetWindow.show();
+                    }
+                },
+                {
+                    xtype: 'button',
+                    text: 'Delete',
+                    width: 80,
+                    handler: function () {
+                        var deleteItems = sm.getSelections()
+                        deleteItems.forEach(item => { Ext.getCmp('grid').store.remove(item) })
+                        grid.view.refresh()
+                    },
+                },
+            ]
+        })
+
+
+    })
 </script>
+
 </html>
